@@ -4,7 +4,7 @@ class Header extends Component {
   render() {
     return (
         <header className="App-header">
-            <h1 className="App-title">Welcome to React</h1>
+            <h3 className="App-title">This is the header</h3>
         </header>
     );
   }
