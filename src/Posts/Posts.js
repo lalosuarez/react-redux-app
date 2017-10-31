@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import fetchPosts from './Actions/Actions';
+import { Link } from 'react-router';
 
 class Posts extends Component {
 
@@ -10,9 +11,12 @@ class Posts extends Component {
 
     render() {
         return (
-            <p className="App-intro">
-            List of Posts
-            </p>
+            <div>
+                <Link to="/posts/new" className="btn btn-primary">
+                    Add new
+                </Link>
+                <p className="App-intro">List of Posts</p>
+            </div>
         );
     }
 }
