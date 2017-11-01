@@ -1,49 +1,87 @@
 import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
+import { Link } from 'react-router';
+import { connect } from 'react-redux';
 import { createPost } from './Actions/Actions';
 
 class NewPost extends Component {
 
-  handleSubmit(event) {
-    console.log(event);
-    event.preventDefault();
+  renderField(field) {
+    const { meta: { touched, error } } = field;
+    const className = `form-group ${ touched && error ? 'has-error' : ''}`;
+    return (
+      <div className={ className }>
+        <label>{ field.label }</label>
+        <input className="form-control" type={ field.type } { ...field.input } />
+        <div className="help-block with-errors">
+          { touched ? error : '' }
+        </div>
+      </div>  
+    );
+  }
+
+  renderTextArea(field) {
+    const { meta: { touched, error } } = field;
+    const className = `form-group ${ touched && error ? 'has-error' : ''}`;
+    return (
+      <div className={ className }>
+        <label>{ field.label }</label>
+        <textarea className="form-control" { ...field.input } />
+        { touched ? error : '' }
+      </div>      
+    );
+  }
+
+  onSubmit(post) {
+    this.props.createPost(post);
   }
 
   render() {
-    
-    //const { handleSubmit } = this.props;
-    //const handleSubmit = this.props.handleSubmit;
-    console.log(this.props);
+    const { handleSubmit } = this.props;
 
     return (
       <div>
         <h4>Create new Post</h4>
-        <form onSubmit={ this.handleSubmit.bind(this) } >
-          <div className="form-group">
-            <label htmlFor="title">Title</label>
-            {/* <input type="text" className="form-control" id="title" /> */}
-            <Field name="title" component="input"
-              type="text" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="category">Category</label>
-            {/* <input type="text" className="form-control" id="category" /> */}
-            <Field name="category" component="input"
-              type="text" className="form-control" />
-          </div>
-          <div className="form-group">
-            <label htmlFor="content">Content</label>
-            {/* <textarea className="form-control" id="content" /> */}
-            <Field name="content" component="textarea"
-              type="text" className="form-control" />
-          </div>
+        <form onSubmit={ handleSubmit(this.onSubmit.bind(this)) }>
+
+          <Field label="Title" name="title"
+            type="text" component={ this.renderField } />
+
+          <Field label="Category" name="category"
+            type="text" component={ this.renderField } />
+
+          <Field label="Content" name="content"
+            component={ this.renderTextArea } />            
+
           <button type="submit" className="btn btn-primary">Submit</button>
+          <Link to="/posts" className="btn btn-danger">
+              Cancel
+          </Link>
         </form>
       </div>          
     );
   }
 }
 
+function validate(values) {
+  const errors = {};
+
+  if (!values.title) {
+    errors.title = "Enter a title";
+  }
+
+  if (!values.category) {
+    errors.category = "Enter a category";
+  }
+
+  if (!values.content) {
+    errors.content = "Enter some content";
+  }
+
+  return errors;
+}
+
 export default reduxForm({
-  form: 'NewPostForm'
-}, null, { createPost })(NewPost);
+  form: 'NewPostForm',
+  validate
+})(connect(null, { createPost })(NewPost));
